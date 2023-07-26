@@ -6,6 +6,7 @@
 // Execute `rustlings hint try_from_into` or use the `hint` watch subcommand for a hint.
 
 use std::convert::{TryFrom, TryInto};
+use std::i16;
 
 #[derive(Debug, PartialEq)]
 struct Color {
@@ -23,8 +24,6 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
-
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
 // You need to create an implementation for a tuple of three integers,
@@ -38,6 +37,16 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+
+        if tuple.0 > 255 || tuple.0 < 0 || tuple.1 > 255 || tuple.1 < 0 || tuple.2 > 255 || tuple.2 < 0{
+            return Err(IntoColorError::IntConversion)
+        }
+
+        return Ok(Color {
+            red: tuple.0 as u8,
+            green: tuple.1 as u8,
+            blue: tuple.2 as u8
+        });
     }
 }
 
@@ -45,6 +54,14 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        if arr[0] > 255 || arr[0] < 0 || arr[1] > 255 || arr[1] < 0 || arr[2] > 255 || arr[2] < 0{
+            return Err(IntoColorError::IntConversion)
+        }
+        return Ok(Color {
+            red: arr[0] as u8,
+            green: arr[1] as u8,
+            blue: arr[2] as u8
+        });
     }
 }
 
@@ -52,6 +69,24 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3{
+            return Err(IntoColorError::BadLen);
+        }
+        let mut colors:[u8;3] = [0, 0, 0];
+        let mut i = 0;
+        for element in slice {
+            if *element < 0 || *element > 255 {
+                return Err(IntoColorError::IntConversion);
+            }
+            colors[i] = *element as u8;
+            i+=1;
+        }
+        return Ok(Color {
+            red: colors[0],
+            green: colors[1],
+            blue:colors[2]
+        });
+
     }
 }
 
